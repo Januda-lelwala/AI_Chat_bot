@@ -68,17 +68,31 @@ export class KnowledgeService {
     for (const chunk of input.chunks) {
       const embedding = await this.llm.embed(chunk);
       const chunkId = `chunk_${randomUUID().replaceAll("-", "")}`;
-      await prisma.$executeRaw`
-        INSERT INTO "KnowledgeChunk" ("id", "sourceId", "content", "metadata", "embedding", "createdAt")
-        VALUES (
-          ${chunkId},
-          ${source.id},
-          ${chunk},
-          '{}'::jsonb,
-          ${`[${embedding.join(",")}]`}::vector,
-          NOW()
-        );
-      `;
+      if (embedding.length) {
+        await prisma.$executeRaw`
+          INSERT INTO "KnowledgeChunk" ("id", "sourceId", "content", "metadata", "embedding", "createdAt")
+          VALUES (
+            ${chunkId},
+            ${source.id},
+            ${chunk},
+            '{}'::jsonb,
+            ${`[${embedding.join(",")}]`}::vector,
+            NOW()
+          );
+        `;
+      } else {
+        await prisma.$executeRaw`
+          INSERT INTO "KnowledgeChunk" ("id", "sourceId", "content", "metadata", "embedding", "createdAt")
+          VALUES (
+            ${chunkId},
+            ${source.id},
+            ${chunk},
+            '{}'::jsonb,
+            NULL,
+            NOW()
+          );
+        `;
+      }
     }
 
     await prisma.knowledgeSource.update({

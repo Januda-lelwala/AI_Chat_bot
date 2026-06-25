@@ -1,5 +1,4 @@
-import type { ChatCompletionTool } from "openai/resources/chat/completions";
-import type { BotContext, BotTool } from "../../types/bot.js";
+import type { BotContext, BotTool, LlmToolDefinition } from "../../types/bot.js";
 
 export class ToolRegistry {
   private readonly tools = new Map<string, BotTool<any>>();
@@ -16,7 +15,7 @@ export class ToolRegistry {
     return context.bot.enabledTools.map((name) => this.tools.get(name)).filter((tool): tool is BotTool => Boolean(tool));
   }
 
-  toOpenAiTools(context: BotContext): ChatCompletionTool[] {
-    return this.enabledTools(context).map((tool) => tool.toOpenAITool());
+  toLlmTools(context: BotContext): LlmToolDefinition[] {
+    return this.enabledTools(context).map((tool) => tool.toLlmTool());
   }
 }

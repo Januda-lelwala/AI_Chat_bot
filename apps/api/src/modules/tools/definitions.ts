@@ -1,8 +1,7 @@
-import type { ChatCompletionTool } from "openai/resources/chat/completions";
 import { z } from "zod";
-import { zodToOpenAiSchema } from "../../lib/json-schema.js";
+import { zodToJsonSchema } from "../../lib/json-schema.js";
 import { prisma } from "../../lib/prisma.js";
-import type { BotContext, BotTool, ToolResult } from "../../types/bot.js";
+import type { BotContext, BotTool, LlmToolDefinition, ToolResult } from "../../types/bot.js";
 
 export function createTool<TInput>(
   name: string,
@@ -16,15 +15,12 @@ export function createTool<TInput>(
     description,
     schema,
     requiresConfirmation: options.requiresConfirmation,
-    execute,
-    toOpenAITool: (): ChatCompletionTool => ({
-      type: "function",
-      function: {
-        name,
-        description,
-        parameters: zodToOpenAiSchema(schema)
-      }
-    })
+    toLlmTool: (): LlmToolDefinition => ({
+      name,
+      description,
+      parameters: zodToJsonSchema(schema)
+    }),
+    execute
   };
 }
 

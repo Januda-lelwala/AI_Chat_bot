@@ -1,6 +1,13 @@
 import OpenAI from "openai";
-import { env } from "../config/env.js";
 
-export const openai = new OpenAI({
-  apiKey: env.OPENAI_API_KEY
-});
+export function createOpenAiClient(input: {
+  apiKey: string;
+  baseURL?: string;
+  defaultHeaders?: Record<string, string>;
+}): OpenAI {
+  return new OpenAI({
+    apiKey: input.apiKey,
+    baseURL: input.baseURL,
+    defaultHeaders: input.defaultHeaders
+  });
+}

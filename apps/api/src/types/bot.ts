@@ -1,4 +1,3 @@
-import type { ChatCompletionTool } from "openai/resources/chat/completions";
 import type { z } from "zod";
 
 export type FrontendAction =
@@ -66,12 +65,18 @@ export type ToolResult = {
   data?: Record<string, unknown>;
 };
 
+export type LlmToolDefinition = {
+  name: string;
+  description: string;
+  parameters: Record<string, unknown>;
+};
+
 export type BotTool<TInput = unknown> = {
   name: string;
   description: string;
   schema: z.ZodType<TInput>;
   requiresConfirmation?: boolean;
-  toOpenAITool: () => ChatCompletionTool;
+  toLlmTool: () => LlmToolDefinition;
   execute: (input: TInput, context: BotContext) => Promise<ToolResult>;
 };
 

@@ -44,7 +44,7 @@ export class LangGraphChatAgent {
 
     const graph = new StateGraph(GraphState)
       .addNode("agent", async (state) => {
-        const llmResponse = await this.llm.generate(state.messages, this.registry.toOpenAiTools(context));
+        const llmResponse = await this.llm.generate(state.messages, this.registry.toLlmTools(context));
         const assistantMessage: LlmMessage = {
           role: "assistant",
           content: llmResponse.content,

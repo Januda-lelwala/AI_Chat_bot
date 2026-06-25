@@ -1,10 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import { ZodError } from "zod";
 import { chatRequestSchema, ChatService } from "./chat.service.js";
-import { OpenAiLlmProvider } from "./llm-provider.js";
+import { createLlmProvider } from "./llm-provider.js";
 
 export async function chatRoutes(app: FastifyInstance): Promise<void> {
-  const chat = new ChatService(new OpenAiLlmProvider());
+  const chat = new ChatService(createLlmProvider());
 
   app.post("/api/chat", async (request, reply) => {
     try {

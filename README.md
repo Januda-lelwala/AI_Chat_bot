@@ -6,7 +6,8 @@ Reusable multi-tenant chatbot backend for websites and businesses. It is designe
 
 - Node.js, TypeScript, Fastify
 - LangGraph.js agent workflow
-- OpenAI chat and embeddings
+- Modular chat providers: OpenAI, Anthropic, and OpenRouter
+- OpenAI embeddings for pgvector knowledge search, or disabled embeddings for chat-only deployments
 - PostgreSQL, Prisma, pgvector
 - Redis and BullMQ
 - S3-compatible storage target such as Cloudflare R2, AWS S3, or MinIO
@@ -18,7 +19,7 @@ Reusable multi-tenant chatbot backend for websites and businesses. It is designe
 apps/api
   prisma/schema.prisma
   src/config              environment parsing
-  src/lib                 Prisma, Redis, OpenAI clients
+  src/lib                 Prisma, Redis, provider clients
   src/modules/bots        bot config loading and prompt builder
   src/modules/chat        /api/chat, LLM abstraction, LangGraph workflow
   src/modules/tools       plugin registry, permission checks, generic tools
@@ -37,7 +38,7 @@ apps/api
 cp apps/api/.env.example apps/api/.env
 ```
 
-2. Fill in `OPENAI_API_KEY`.
+2. Choose a chat provider in `LLM_PROVIDER` and fill in the matching API key.
 
 3. Start local services:
 
@@ -91,6 +92,55 @@ The backend:
 12. Returns the assistant response and optional safe frontend actions.
 
 Frontend actions are restricted to `open_url`, `scroll_to`, `prefill_form`, and `highlight_element`. The backend never asks the frontend to execute arbitrary JavaScript.
+
+## Model Providers
+
+The chat layer is provider-agnostic. The Fastify routes, LangGraph workflow, tools, and knowledge modules depend on the internal `LlmProvider` interface, not on a vendor SDK.
+
+Provider selection lives in `apps/api/.env`:
+
+```bash
+LLM_PROVIDER=openai
+EMBEDDING_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+OPENAI_CHAT_MODEL=gpt-4o-mini
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+```
+
+Anthropic chat:
+
+```bash
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+ANTHROPIC_MODEL=claude-3-5-haiku-latest
+
+# Required if you want pgvector knowledge search.
+EMBEDDING_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+```
+
+OpenRouter chat:
+
+```bash
+LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-...
+OPENROUTER_CHAT_MODEL=openai/gpt-4o-mini
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+OPENROUTER_SITE_URL=https://your-site.example
+OPENROUTER_APP_NAME=AI Chatbot Backend
+
+# Required if you want pgvector knowledge search.
+EMBEDDING_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+```
+
+For chat-only deployments without vector search:
+
+```bash
+EMBEDDING_PROVIDER=none
+```
+
+Provider adapters are implemented in [llm-provider.ts](apps/api/src/modules/chat/llm-provider.ts). OpenAI and OpenRouter use the OpenAI-compatible chat-completions format. Anthropic uses the Messages API format and maps internal tool calls to `tool_use` and `tool_result` blocks.
 
 ## Creating a Business Bot
 

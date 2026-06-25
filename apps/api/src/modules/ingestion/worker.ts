@@ -3,7 +3,7 @@ import { Worker } from "bullmq";
 import { redisConnection } from "../../lib/redis.js";
 import { prisma } from "../../lib/prisma.js";
 import { KnowledgeService } from "../knowledge/knowledge.service.js";
-import { OpenAiLlmProvider } from "../chat/llm-provider.js";
+import { createLlmProvider } from "../chat/llm-provider.js";
 import { chunkText } from "./chunker.js";
 
 type IngestionJob = {
@@ -15,7 +15,7 @@ type IngestionJob = {
   content?: string;
 };
 
-const knowledge = new KnowledgeService(new OpenAiLlmProvider());
+const knowledge = new KnowledgeService(createLlmProvider());
 
 const worker = new Worker<IngestionJob>(
   "knowledge-ingestion",

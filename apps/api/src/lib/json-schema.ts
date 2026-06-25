@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-export function zodToOpenAiSchema(schema: z.ZodTypeAny): Record<string, unknown> {
+export function zodToJsonSchema(schema: z.ZodTypeAny): Record<string, unknown> {
   const shape = getShape(schema);
   const properties: Record<string, unknown> = {};
   const required: string[] = [];
