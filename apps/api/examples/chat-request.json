@@ -1,0 +1,7 @@
+{
+  "botId": "replace-with-bot-id",
+  "conversationId": "optional-existing-conversation-id",
+  "message": "Do you offer weekend appointments?",
+  "pageUrl": "https://example.com/services",
+  "confirmed": false
+}

@@ -1,0 +1,20 @@
+{
+  "name": "ai-chatbot-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reusable multi-tenant AI chatbot backend for websites and businesses.",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace @chatbot/api",
+    "dev": "npm run dev --workspace @chatbot/api",
+    "lint": "npm run lint --workspace @chatbot/api",
+    "prisma:generate": "npm run prisma:generate --workspace @chatbot/api",
+    "prisma:migrate": "npm run prisma:migrate --workspace @chatbot/api",
+    "typecheck": "npm run typecheck --workspace @chatbot/api"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
