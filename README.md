@@ -40,13 +40,25 @@ cp apps/api/.env.example apps/api/.env
 
 2. Choose a chat provider in `LLM_PROVIDER` and fill in the matching API key.
 
-3. Start local services:
+### Option A: Run everything in Docker
+
+Use this for server-style setup:
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-4. Install dependencies and initialize Prisma:
+This starts the API, PostgreSQL, Redis, and MinIO. The API container listens on `http://localhost:3000` and applies the Prisma schema on startup.
+
+### Option B: Run only dependencies in Docker
+
+Use this for local TypeScript development with hot reload:
+
+```bash
+docker compose up -d postgres redis minio
+```
+
+Then install dependencies and initialize Prisma:
 
 ```bash
 npm install
@@ -54,13 +66,13 @@ npm run prisma:generate
 npm run prisma:migrate
 ```
 
-5. Start the API:
+Then start the API with hot reload:
 
 ```bash
 npm run dev
 ```
 
-The API listens on `http://localhost:3000`.
+When running the API inside Docker, Compose overrides service URLs so the API connects to `postgres`, `redis`, and `minio` internally. Keep `apps/api/.env` for provider settings and secrets such as `OPENROUTER_API_KEY`.
 
 ## Core Chat Flow
 

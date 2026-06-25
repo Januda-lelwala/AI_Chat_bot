@@ -1,0 +1,13 @@
+node_modules
+apps/*/node_modules
+apps/*/dist
+.git
+.context
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+*.log
+coverage
+.DS_Store
