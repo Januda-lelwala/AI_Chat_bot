@@ -132,6 +132,8 @@ Frontend actions are restricted to `open_url`, `scroll_to`, `prefill_form`, and 
 
 `pageContext` is optional live browser context for authenticated or dynamic pages. The widget should send only visible, non-sensitive text and stable safe selectors such as `data-ai` attributes. This context is added to the prompt for the current request but is not vectorized into shared knowledge. `highlight_element` and `prefill_form` only return actions for selectors supplied in `pageContext`.
 
+For website builder instructions and widget implementation requirements, see [docs/widget-integration.md](docs/widget-integration.md).
+
 ## Model Providers
 
 The chat layer is provider-agnostic. The Fastify routes, LangGraph workflow, tools, and knowledge modules depend on the internal `LlmProvider` interface, not on a vendor SDK.

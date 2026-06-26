@@ -16,11 +16,13 @@ WORKDIR /app
 ENV NODE_ENV=production
 RUN apk add --no-cache openssl
 COPY --from=build /app/node_modules node_modules
-COPY --from=build /app/apps/api/package.json package.json
-COPY --from=build /app/apps/api/dist dist
-COPY --from=build /app/apps/api/prisma prisma
+COPY --from=build /app/apps/api/package.json apps/api/package.json
+COPY --from=build /app/apps/api/dist apps/api/dist
+COPY --from=build /app/apps/api/prisma apps/api/prisma
+COPY --from=build /app/apps/api/node_modules apps/api/node_modules
 COPY docker/api-entrypoint.sh /usr/local/bin/api-entrypoint
 RUN chmod +x /usr/local/bin/api-entrypoint
+WORKDIR /app/apps/api
 EXPOSE 3000
 ENTRYPOINT ["api-entrypoint"]
 CMD ["node", "dist/index.js"]
