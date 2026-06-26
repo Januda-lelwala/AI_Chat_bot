@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma.js";
 import type { KnowledgeResult } from "../../types/bot.js";
 import type { LlmProvider } from "../chat/llm-provider.js";
@@ -50,18 +51,21 @@ export class KnowledgeService {
   async createTextSource(input: {
     businessId: string;
     botId?: string;
+    type?: "website" | "document" | "faq" | "text";
     title?: string;
     uri: string;
+    metadata?: Record<string, unknown>;
     chunks: string[];
   }): Promise<string> {
     const source = await prisma.knowledgeSource.create({
       data: {
         businessId: input.businessId,
         botId: input.botId,
-        type: "text",
+        type: input.type ?? "text",
         title: input.title,
         uri: input.uri,
-        status: "PROCESSING"
+        status: "PROCESSING",
+        metadata: (input.metadata ?? {}) as Prisma.InputJsonValue
       }
     });
 

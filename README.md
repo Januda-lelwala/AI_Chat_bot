@@ -188,7 +188,27 @@ Run the worker in a second terminal:
 npm run worker:ingestion --workspace @chatbot/api
 ```
 
-Website crawling, document parsing, and object storage upload are intentionally left as adapter points. The current worker implements direct text ingestion and vectorization.
+Queue an optional website ingestion job:
+
+```bash
+curl -X POST http://localhost:3000/api/ingestion/jobs \
+  -H 'content-type: application/json' \
+  -d '{
+    "businessId": "business-id",
+    "botId": "optional-bot-id",
+    "type": "website",
+    "uri": "https://example.com",
+    "crawl": {
+      "maxPages": 10,
+      "maxDepth": 2,
+      "excludePaths": ["/admin", "/checkout"]
+    }
+  }'
+```
+
+Website ingestion fetches public same-origin HTML pages, extracts visible text plus headings, links, buttons, and forms, then vectorizes that content for chat context. Defaults are conservative: one page and depth `0` unless `crawl.maxPages` or `crawl.maxDepth` are provided. It does not execute arbitrary JavaScript, log in, submit forms, or parse documents such as PDFs.
+
+Document parsing and object storage upload are intentionally left as adapter points.
 
 ## Adding a New Tool
 

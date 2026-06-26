@@ -8,7 +8,17 @@ const ingestionRequestSchema = z.object({
   type: z.enum(["website", "document", "faq", "text"]),
   uri: z.string().min(1),
   title: z.string().optional(),
-  content: z.string().optional()
+  content: z.string().optional(),
+  crawl: z
+    .object({
+      maxPages: z.number().int().min(1).max(50).optional(),
+      maxDepth: z.number().int().min(0).max(5).optional(),
+      timeoutMs: z.number().int().min(1000).max(30000).optional(),
+      userAgent: z.string().min(1).optional(),
+      includePaths: z.array(z.string().min(1)).optional(),
+      excludePaths: z.array(z.string().min(1)).optional()
+    })
+    .optional()
 });
 
 export async function ingestionRoutes(app: FastifyInstance): Promise<void> {
