@@ -3,5 +3,30 @@
   "conversationId": "optional-existing-conversation-id",
   "message": "Do you offer weekend appointments?",
   "pageUrl": "https://example.com/services",
+  "pageContext": {
+    "title": "Services",
+    "visibleText": "Book a service. Weekend appointments are available for select services.",
+    "headings": ["Services", "Book an appointment"],
+    "buttons": [
+      {
+        "label": "Book now",
+        "selector": "[data-ai='book-now']"
+      }
+    ],
+    "links": [
+      {
+        "label": "Pricing",
+        "url": "https://example.com/pricing",
+        "selector": "[data-ai='pricing-link']"
+      }
+    ],
+    "forms": [
+      {
+        "label": "Lead form",
+        "selector": "[data-ai='lead-form']",
+        "fields": ["name", "email", "message"]
+      }
+    ]
+  },
   "confirmed": false
 }

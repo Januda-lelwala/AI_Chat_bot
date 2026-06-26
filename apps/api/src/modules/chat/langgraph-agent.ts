@@ -35,7 +35,7 @@ export class LangGraphChatAgent {
   }
 
   async run(context: BotContext, userMessage: string): Promise<{ response: string; actions: FrontendAction[] }> {
-    const systemPrompt = buildSystemPrompt(context.bot, context.knowledge);
+    const systemPrompt = buildSystemPrompt(context.bot, context.knowledge, context.pageContext, context.pageUrl);
     const initialMessages: LlmMessage[] = [
       { role: "system", content: systemPrompt },
       ...context.conversation.messages,

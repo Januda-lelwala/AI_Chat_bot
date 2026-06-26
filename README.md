@@ -84,6 +84,31 @@ When running the API inside Docker, Compose overrides service URLs so the API co
   "conversationId": "optional-conversation-id",
   "message": "What services do you offer?",
   "pageUrl": "https://example.com/services",
+  "pageContext": {
+    "title": "Services",
+    "visibleText": "Book a service. Weekend appointments are available for select services.",
+    "headings": ["Services", "Book an appointment"],
+    "buttons": [
+      {
+        "label": "Book now",
+        "selector": "[data-ai='book-now']"
+      }
+    ],
+    "links": [
+      {
+        "label": "Pricing",
+        "url": "https://example.com/pricing",
+        "selector": "[data-ai='pricing-link']"
+      }
+    ],
+    "forms": [
+      {
+        "label": "Lead form",
+        "selector": "[data-ai='lead-form']",
+        "fields": ["name", "email", "message"]
+      }
+    ]
+  },
   "confirmed": false
 }
 ```
@@ -104,6 +129,8 @@ The backend:
 12. Returns the assistant response and optional safe frontend actions.
 
 Frontend actions are restricted to `open_url`, `scroll_to`, `prefill_form`, and `highlight_element`. The backend never asks the frontend to execute arbitrary JavaScript.
+
+`pageContext` is optional live browser context for authenticated or dynamic pages. The widget should send only visible, non-sensitive text and stable safe selectors such as `data-ai` attributes. This context is added to the prompt for the current request but is not vectorized into shared knowledge. `highlight_element` and `prefill_form` only return actions for selectors supplied in `pageContext`.
 
 ## Model Providers
 
@@ -226,6 +253,8 @@ The existing generic tools are:
 - `human_handoff`
 - `open_url`
 - `scroll_to_section`
+- `highlight_element`
+- `prefill_form`
 - `create_ticket`
 
 ## Integrations

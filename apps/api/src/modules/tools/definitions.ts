@@ -144,6 +144,51 @@ export const scrollToSectionTool = createTool(
   })
 );
 
+export const highlightElementTool = createTool(
+  "highlight_element",
+  "Highlight a visible element on the current page using a selector supplied by live page context.",
+  z.object({
+    selector: z.string().min(1).max(300)
+  }),
+  async (input, context) => {
+    if (!isKnownLivePageSelector(input.selector, context)) {
+      return {
+        content: "Blocked highlight action because the selector was not supplied by live page context.",
+        data: { blocked: true }
+      };
+    }
+
+    return {
+      content: `Prepared frontend highlight action for ${input.selector}.`,
+      actions: [{ type: "highlight_element", selector: input.selector }]
+    };
+  }
+);
+
+export const prefillFormTool = createTool(
+  "prefill_form",
+  "Prefill a visible form on the current page using a selector supplied by live page context.",
+  z.object({
+    selector: z.string().min(1).max(300),
+    values: z.record(z.string().max(1000)).refine((values) => Object.keys(values).length > 0, {
+      message: "At least one form value is required"
+    })
+  }),
+  async (input, context) => {
+    if (!isKnownLivePageSelector(input.selector, context)) {
+      return {
+        content: "Blocked prefill action because the selector was not supplied by live page context.",
+        data: { blocked: true }
+      };
+    }
+
+    return {
+      content: `Prepared frontend prefill action for ${input.selector}.`,
+      actions: [{ type: "prefill_form", selector: input.selector, values: input.values }]
+    };
+  }
+);
+
 export const createTicketTool = createTool(
   "create_ticket",
   "Create a support ticket after collecting required fields and receiving visitor confirmation.",
@@ -170,4 +215,19 @@ function isSameOriginOrPath(url: string, websiteUrl: string): boolean {
   const target = new URL(url);
   const website = new URL(websiteUrl);
   return target.origin === website.origin;
+}
+
+function isKnownLivePageSelector(selector: string, context: BotContext): boolean {
+  const pageContext = context.pageContext;
+  if (!pageContext) {
+    return false;
+  }
+
+  const selectors = [
+    ...(pageContext.buttons ?? []).map((element) => element.selector),
+    ...(pageContext.links ?? []).map((element) => element.selector),
+    ...(pageContext.forms ?? []).map((element) => element.selector)
+  ];
+
+  return selectors.includes(selector);
 }

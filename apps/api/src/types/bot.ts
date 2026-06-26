@@ -51,10 +51,33 @@ export type KnowledgeResult = {
   score?: number;
 };
 
+export type PageElementContext = {
+  label?: string;
+  selector?: string;
+};
+
+export type PageLinkContext = PageElementContext & {
+  url?: string;
+};
+
+export type PageFormContext = PageElementContext & {
+  fields?: string[];
+};
+
+export type PageContext = {
+  title?: string;
+  visibleText?: string;
+  headings?: string[];
+  buttons?: PageElementContext[];
+  links?: PageLinkContext[];
+  forms?: PageFormContext[];
+};
+
 export type BotContext = {
   bot: BotConfig;
   conversation: ConversationSnapshot;
   pageUrl?: string;
+  pageContext?: PageContext;
   knowledge: KnowledgeResult[];
   requestedConfirmation?: boolean;
 };

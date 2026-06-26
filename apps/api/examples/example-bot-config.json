@@ -17,6 +17,8 @@
     "human_handoff",
     "open_url",
     "scroll_to_section",
+    "highlight_element",
+    "prefill_form",
     "create_ticket"
   ],
   "rules": [

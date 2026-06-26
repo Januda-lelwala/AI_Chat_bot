@@ -7,11 +7,42 @@ import { createDefaultToolRegistry } from "../tools/default-registry.js";
 import { LangGraphChatAgent } from "./langgraph-agent.js";
 import type { LlmProvider } from "./llm-provider.js";
 
+const safeSelectorSchema = z.string().min(1).max(300);
+
+const pageElementContextSchema = z.object({
+  label: z.string().max(200).optional(),
+  selector: safeSelectorSchema.optional()
+});
+
+const pageContextSchema = z.object({
+  title: z.string().max(200).optional(),
+  visibleText: z.string().max(12000).optional(),
+  headings: z.array(z.string().max(200)).max(80).optional(),
+  buttons: z.array(pageElementContextSchema).max(100).optional(),
+  links: z
+    .array(
+      pageElementContextSchema.extend({
+        url: z.string().max(1000).optional()
+      })
+    )
+    .max(100)
+    .optional(),
+  forms: z
+    .array(
+      pageElementContextSchema.extend({
+        fields: z.array(z.string().max(120)).max(40).optional()
+      })
+    )
+    .max(30)
+    .optional()
+});
+
 export const chatRequestSchema = z.object({
   botId: z.string().min(1),
   conversationId: z.string().optional(),
   message: z.string().min(1),
   pageUrl: z.string().url().optional(),
+  pageContext: pageContextSchema.optional(),
   confirmed: z.boolean().default(false)
 });
 
@@ -46,6 +77,7 @@ export class ChatService {
         bot,
         conversation,
         pageUrl: request.pageUrl,
+        pageContext: request.pageContext,
         knowledge,
         requestedConfirmation: request.confirmed
       },
